@@ -213,10 +213,51 @@ footer{background:var(--ink);color:var(--muted-ink);font-size:13.5px;line-height
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px 30px}
 footer .jp{color:var(--red)}
 
+
+/* ---------- v2 effects ---------- */
+.progress{position:fixed;left:0;top:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:var(--red);z-index:70;pointer-events:none}
+/* Rairaku: the thunder */
+.storm{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.storm::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 78% 16%,rgba(255,255,255,.17),transparent 70%);opacity:0;animation:flash 11s linear 2.5s infinite}
+.bolt{position:absolute;right:15%;top:0;width:120px;height:min(55vh,440px);opacity:0;overflow:visible;animation:flash 11s linear 2.5s infinite;filter:drop-shadow(0 0 5px rgba(255,255,255,.75)) drop-shadow(0 0 16px rgba(196,36,30,.6))}
+.bolt path{fill:none;stroke:#f6f1e6;stroke-width:3;stroke-linejoin:bevel;stroke-linecap:round}
+.bolt path.br{stroke-width:1.6}
+@keyframes flash{0%,90%{opacity:0}90.6%{opacity:1}91.4%{opacity:.12}92.2%{opacity:.85}94.5%,100%{opacity:0}}
+.chapter.dark>.wrap{position:relative;z-index:1}
+/* Rairaku: the RanKu lands */
+.ranku .jp{transform-origin:30% 60%}
+.ranku::after{content:"";position:absolute;left:26px;top:16px;width:70px;height:70px;border:3px solid var(--red);border-radius:50%;opacity:0;pointer-events:none}
+.js .ranku.in .jp{animation:impact .75s cubic-bezier(.2,1.5,.35,1) .2s both}
+.js .ranku.in::after{animation:burst .7s ease-out .42s both}
+.js .ranku.in{animation:shake .32s linear .42s both}
+@keyframes impact{0%{opacity:0;transform:scale(2.4) rotate(-8deg)}45%{opacity:1}65%{transform:scale(.9) rotate(2deg)}100%{opacity:1;transform:none}}
+@keyframes burst{0%{opacity:.9;transform:scale(.3)}100%{opacity:0;transform:scale(2.7)}}
+@keyframes shake{0%,100%{transform:none}20%{transform:translate(-3px,1px)}40%{transform:translate(3px,-1px)}60%{transform:translate(-2px,0)}80%{transform:translate(2px,1px)}}
+/* SALT OGRE: salt falling in the dark panel */
+.grain{position:absolute;top:-4%;width:3px;height:3px;background:#fff;border-radius:1px;opacity:.9;animation:grain linear infinite}
+@keyframes grain{to{top:104%;transform:rotate(260deg)}}
+/* panels land one after the other */
+.js .beats .beat:nth-child(2),.js .deal .beat:nth-child(2){transition-delay:.12s}
+.js .beats .beat:nth-child(3),.js .deal .beat:nth-child(3){transition-delay:.24s}
+/* short stories: the toothache and the stuck elevator */
+.short .ico{transform-origin:50% 60%;animation:throb 2.4s ease-in-out infinite}
+.short .ico .ache{animation:ache 2.4s ease-in-out infinite}
+@keyframes throb{0%,100%{transform:scale(1)}8%{transform:scale(1.1) rotate(-4deg)}16%{transform:scale(1)}24%{transform:scale(1.06) rotate(3deg)}32%{transform:scale(1)}}
+@keyframes ache{0%,100%{opacity:.2}8%,24%{opacity:1}}
+.floor{animation:flicker 7s steps(1) infinite}
+.floor .arr{animation:blink 1.2s steps(1) infinite}
+@keyframes flicker{0%,86%,100%{opacity:1}87%{opacity:.25}88%{opacity:1}89.5%{opacity:.35}91%{opacity:1}}
+@keyframes blink{0%,60%{opacity:1}61%,100%{opacity:.15}}
+/* colophon: the ink circle paints itself */
+@property --sweep{syntax:'<angle>';inherits:false;initial-value:0deg}
+.js .emblem.rv{-webkit-mask-image:conic-gradient(from 228deg at 51.9% 57.6%,#000 var(--sweep),transparent calc(var(--sweep) + 16deg));mask-image:conic-gradient(from 228deg at 51.9% 57.6%,#000 var(--sweep),transparent calc(var(--sweep) + 16deg))}
+.js .emblem.rv.in{animation:paint 2.1s cubic-bezier(.55,.05,.35,1) .3s both}
+@keyframes paint{from{--sweep:0deg}to{--sweep:390deg}}
+
 /* ---------- motion ---------- */
 .js .rv{opacity:0;transform:translateY(26px);transition:opacity .75s ease,transform .75s cubic-bezier(.2,.7,.2,1)}
 .js .rv.in{opacity:1;transform:none}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}.js .rv{opacity:1;transform:none}.petals{display:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}.js .rv{opacity:1;transform:none}.petals,.storm{display:none}.js .emblem.rv{-webkit-mask-image:none;mask-image:none}}
 </style>
 </head>
 <body>
@@ -233,6 +274,7 @@ footer .jp{color:var(--red)}
   </defs>
 </svg>
 
+<div class="progress" id="progress" aria-hidden="true"></div>
 <header class="nav" id="nav">
   <a class="brand" href="#top" aria-label="OGRE WORKS, back to top"><svg viewBox="0 0 920 1580" aria-hidden="true"><use href="#seal"/></svg>OGRE WORKS</a>
   <nav aria-label="Main"><ul>
@@ -278,6 +320,7 @@ footer .jp{color:var(--red)}
 
 <!-- CHAPTER 1 -->
 <section class="chapter dark" id="rairaku" aria-labelledby="rh-h">
+  <div class="storm" aria-hidden="true"><svg class="bolt" viewBox="0 0 120 400" preserveAspectRatio="none"><path vector-effect="non-scaling-stroke" d="M74 0 L54 96 L78 100 L42 214 L66 218 L24 400"/><path class="br" vector-effect="non-scaling-stroke" d="M54 96 L22 150 M42 214 L90 270 M66 218 L84 246"/></svg></div>
   <div class="bigk jp" aria-hidden="true">拳</div>
   <div class="wrap">
     <div class="meta rv"><span class="ep jp">第一話</span><span class="tag">Series · Battle shonen · In production</span></div>
@@ -300,7 +343,7 @@ footer .jp{color:var(--red)}
           <li>Registered work (Brazilian National Library)</li>
           <li>A new chapter every week</li>
         </ul>
-        <div class="box"><span class="jp">乱哭</span><b>RanKu, “the lament of chaos”:</b> Rairaku's signature punch. No Pulse, no magic. A whole body turning into one blow.</div>
+        <div class="box rv ranku"><span class="jp">乱哭</span><b>RanKu, “the lament of chaos”:</b> Rairaku's signature punch. No Pulse, no magic. A whole body turning into one blow.</div>
       </div>
     </div>
     <div class="beats">
@@ -343,7 +386,7 @@ footer .jp{color:var(--red)}
     </div>
     <div class="beats">
       <div class="beat tone rv"><span class="n">01</span><p>Once a year, the whole world throws salt.</p></div>
-      <div class="beat inkb rv"><span class="salt" aria-hidden="true"></span><span class="n">02</span><p>Salt burns ogres.</p></div>
+      <div class="beat inkb rv"><span class="salt" id="salt" aria-hidden="true"></span><span class="n">02</span><p>Salt burns ogres.</p></div>
       <div class="beat redb smoke rv"><span class="n">03</span><p>He throws it too. And his hands smoke.</p></div>
     </div>
   </div>
@@ -400,14 +443,14 @@ footer .jp{color:var(--red)}
     <h2 class="display rv" id="sh-h">Short Stories</h2>
     <div class="shorts">
       <article class="short rv">
-        <svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 10c-6 3-8 11-6 19 2 7 3 12 4 19 1 7 4 9 7 9 4 0 5-4 6-10 1-4 2-7 7-7s6 3 7 7c1 6 2 10 6 10 3 0 6-2 7-9 1-7 2-12 4-19 2-8 0-16-6-19-6-3-11 0-15 2-2 1-4 1-6 0-4-2-9-5-15-2z" fill="none" stroke="#111113" stroke-width="3" stroke-linejoin="round"/><path d="M40 20l6-5M44 25l7-2" stroke="#c4241e" stroke-width="3" stroke-linecap="round"/></svg>
+        <svg class="ico" viewBox="0 0 64 64" aria-hidden="true"><path d="M14 10c-6 3-8 11-6 19 2 7 3 12 4 19 1 7 4 9 7 9 4 0 5-4 6-10 1-4 2-7 7-7s6 3 7 7c1 6 2 10 6 10 3 0 6-2 7-9 1-7 2-12 4-19 2-8 0-16-6-19-6-3-11 0-15 2-2 1-4 1-6 0-4-2-9-5-15-2z" fill="none" stroke="#111113" stroke-width="3" stroke-linejoin="round"/><path class="ache" d="M40 20l6-5M44 25l7-2" stroke="#c4241e" stroke-width="3" stroke-linecap="round"/></svg>
         <div class="kicker">Comedy fantasy · 8 pages</div>
         <h3>The Beast's Tooth</h3>
         <p>For three months, a monster has come down from the mountain every night, howling, and the village keeps throwing it honey cakes. Only Nell, the village dentist, recognizes that howl: it's not rage. It's a toothache.</p>
         <div class="st">Status: in pre-production</div>
       </article>
       <article class="short rv">
-        <div class="floor" aria-hidden="true">▲ 11:58 <b>PM</b></div>
+        <div class="floor" aria-hidden="true"><span class="arr">▲</span> 11:58 <b>PM</b></div>
         <div class="kicker">Action comedy · 8 pages</div>
         <h3>Going Up</h3>
         <p>11:58 p.m., a crime boss's skyscraper. Two strangers ride the same elevator. It stops between floors. Each of them was hired to kill the other.</p>
@@ -523,6 +566,17 @@ footer .jp{color:var(--red)}
       s.style.left=(pr()*100)+'%';s.style.animationDuration=(11+pr()*12)+'s';s.style.animationDelay=(-pr()*20)+'s';s.style.transform='scale('+sc+')';
       var it=d.createElement('i');it.style.animationDuration=(2.2+pr()*2.5)+'s';s.appendChild(it);P.appendChild(s);}
   }
+  // salt falling (SALT OGRE, panel 02)
+  var SL=d.getElementById('salt'), sr=rng(41);
+  if(SL && !window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    for(var j=0;j<34;j++){var g=d.createElement('i');g.className='grain';var z=1.5+sr()*2.5;
+      g.style.left=(sr()*100)+'%';g.style.width=z+'px';g.style.height=z+'px';g.style.opacity=(.45+sr()*.55).toFixed(2);
+      g.style.animationDuration=(3.2+sr()*4.5)+'s';g.style.animationDelay=(-sr()*7)+'s';SL.appendChild(g);}
+  }
+  // reading progress (thin red line on top)
+  var PR=d.getElementById('progress'), tick=false;
+  function prog(){var h=d.documentElement.scrollHeight-window.innerHeight;PR.style.transform='scaleX('+(h>0?Math.min(1,window.scrollY/h):0)+')';tick=false}
+  window.addEventListener('scroll',function(){if(!tick){tick=true;requestAnimationFrame(prog)}},{passive:true}); prog();
   // copy the Discord name
   d.querySelectorAll('[data-copy]').forEach(function(b){b.addEventListener('click',function(){
     var t=b.getAttribute('data-copy');
